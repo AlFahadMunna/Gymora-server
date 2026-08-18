@@ -4,7 +4,7 @@ Express + MongoDB REST API for [Vertex Fitness](../frontend), a full-stack fitne
 
 - **Live API:** https://backend-xi-opal-94.vercel.app
 - **Live site (frontend):** https://vertex-fitness-frontend.vercel.app
-- **Frontend repo:** _to be added_
+- **Frontend repo:** https://github.com/AlFahadMunna/Gymora-client
 
 ## How Authentication Works Here
 
