@@ -1,9 +1,20 @@
 const { COOKIE_NAME, verifyAppToken } = require("../utils/jwt");
+const { getDB } = require("../config/db");
+
+// Better Auth's Mongo adapter doesn't guarantee an index on email; every
+// request through verifyToken looks the user up by email, so this index
+// matters for real performance, not just correctness.
+getDB()
+  .then((db) => db.collection("user").createIndex({ email: 1 }, { unique: true }))
+  .catch((error) => console.error("Failed to ensure user email index:", error));
 
 // Protects a route: requires a valid app JWT cookie (issued by POST /jwt
-// after the frontend verifies its Better Auth session). Attaches the
-// decoded payload ({ email, name, role, status }) to req.user.
-function verifyToken(req, res, next) {
+// after the frontend verifies its Better Auth session). The JWT only
+// vouches for identity (email) — role and status are re-read from the
+// database on every request, so an admin's block/promote/demote action
+// takes effect on the very next request instead of waiting for the
+// affected user's token to expire and refresh.
+async function verifyToken(req, res, next) {
   const token = req.cookies?.[COOKIE_NAME];
 
   if (!token) {
@@ -13,7 +24,22 @@ function verifyToken(req, res, next) {
   }
 
   try {
-    req.user = verifyAppToken(token);
+    const decoded = verifyAppToken(token);
+    const db = await getDB();
+    const user = await db.collection("user").findOne({ email: decoded.email });
+
+    if (!user) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Unauthorized: user not found" });
+    }
+
+    req.user = {
+      email: user.email,
+      name: user.name,
+      role: user.role || "user",
+      status: user.status || "active",
+    };
     next();
   } catch {
     return res
@@ -36,9 +62,7 @@ function verifyRole(...roles) {
 }
 
 // Soft-block enforcement (Manage Users): blocked users may still browse,
-// but must be rejected from any state-changing action. Used on top of
-// verifyToken on write routes available to plain users (book, apply as
-// trainer, comment, vote, etc.) starting in Stage 6.
+// but must be rejected from any state-changing action.
 function blockRestricted(req, res, next) {
   if (req.user?.status === "blocked") {
     return res
