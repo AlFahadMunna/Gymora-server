@@ -136,6 +136,16 @@ router.patch(
         .collection("user")
         .updateOne({ email: application.userEmail }, { $set: { role: "trainer" } });
 
+      // In-app notification (optional stretch requirement) — surfaced via
+      // the notifications bell in the Navbar.
+      await db.collection("notifications").insertOne({
+        userEmail: application.userEmail,
+        type: "trainer_approved",
+        message: "Your trainer application has been approved! You now have trainer access.",
+        read: false,
+        createdAt: now,
+      });
+
       res.json({ success: true, message: "Application approved" });
     } catch (error) {
       next(error);
