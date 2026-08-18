@@ -9,6 +9,8 @@ const classesRoutes = require("./routes/classes.routes");
 const forumRoutes = require("./routes/forum.routes");
 const favoritesRoutes = require("./routes/favorites.routes");
 const bookingsRoutes = require("./routes/bookings.routes");
+const trainerApplicationsRoutes = require("./routes/trainerApplications.routes");
+const usersRoutes = require("./routes/users.routes");
 const notFound = require("./middlewares/notFound");
 const errorHandler = require("./middlewares/errorHandler");
 
@@ -38,9 +40,11 @@ app.use("/", classesRoutes);
 app.use("/", forumRoutes);
 app.use("/", favoritesRoutes);
 app.use("/", bookingsRoutes);
+app.use("/", trainerApplicationsRoutes);
+app.use("/", usersRoutes);
 
-// Remaining feature routes (trainer applications, admin user/role
-// management, ...) get mounted here in later stages.
+// Remaining feature routes (class moderation, transactions UI, ...) get
+// mounted here in later stages.
 
 app.use(notFound);
 app.use(errorHandler);
