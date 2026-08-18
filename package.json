@@ -7,7 +7,8 @@
     "dev": "nodemon server.js",
     "start": "node server.js",
     "seed:classes": "node scripts/seedClasses.js",
-    "seed:forum": "node scripts/seedForum.js"
+    "seed:forum": "node scripts/seedForum.js",
+    "promote:admin": "node scripts/promoteAdmin.js"
   },
   "keywords": [],
   "author": "",
