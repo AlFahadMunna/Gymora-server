@@ -27,7 +27,17 @@ router.post("/jwt", async (req, res, next) => {
         .json({ success: false, message: "Missing Better Auth token" });
     }
 
-    const payload = await verifyBetterAuthToken(bearerToken);
+    let payload;
+    try {
+      payload = await verifyBetterAuthToken(bearerToken);
+    } catch {
+      // Malformed/expired/invalid-signature tokens are a client-side auth
+      // problem (401), not a server fault — jose's own errors don't carry
+      // an HTTP status, so without this they'd fall through to a 500.
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid or expired Better Auth token" });
+    }
     const email = payload.email;
 
     if (!email) {
