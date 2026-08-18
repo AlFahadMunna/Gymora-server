@@ -2,7 +2,8 @@
 
 Express + MongoDB REST API for [Vertex Fitness](../frontend), a full-stack fitness & gym management platform. Handles all business data (classes, bookings, forum, favorites, trainer applications, user/role management, Stripe payments) behind role-based JWT authentication; Better Auth itself (email/password + Google login) runs in the frontend and shares this same MongoDB database.
 
-- **Live API:** _to be added after deployment_
+- **Live API:** https://backend-xi-opal-94.vercel.app
+- **Live site (frontend):** https://vertex-fitness-frontend.vercel.app
 - **Frontend repo:** _to be added_
 
 ## How Authentication Works Here
@@ -53,6 +54,14 @@ npm run seed:forum     # 5 sample forum posts with starter comments
 ```
 
 Both skip silently if data already exists; pass `--force` to wipe and reseed.
+
+### Promoting an Admin
+
+Registration always creates a standard "user" account by design. To designate the platform's admin, register normally through the site, then run:
+
+```bash
+npm run promote:admin -- someone@example.com
+```
 
 ## Project Structure
 
