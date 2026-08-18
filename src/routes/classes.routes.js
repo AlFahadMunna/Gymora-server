@@ -94,9 +94,24 @@ router.get("/classes/featured", async (req, res, next) => {
   }
 });
 
+// GET /classes/mine — the logged-in trainer's own classes, any status.
+router.get("/classes/mine", verifyToken, verifyRole("trainer"), async (req, res, next) => {
+  try {
+    const db = await getDB();
+    const classes = await db
+      .collection("classes")
+      .find({ trainerEmail: req.user.email })
+      .sort({ createdAt: -1 })
+      .toArray();
+    res.json({ success: true, data: classes });
+  } catch (error) {
+    next(error);
+  }
+});
+
 // GET /classes/:id — public, but only ever exposes an Approved class.
 // Trainer/admin management views (pending/rejected classes) go through
-// authenticated routes added in later stages, not this one.
+// authenticated routes (GET /classes/mine, GET /admin/classes) instead.
 router.get("/classes/:id", async (req, res, next) => {
   try {
     const objectId = toObjectId(req.params.id);
