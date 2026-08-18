@@ -12,6 +12,7 @@ const bookingsRoutes = require("./routes/bookings.routes");
 const trainerApplicationsRoutes = require("./routes/trainerApplications.routes");
 const usersRoutes = require("./routes/users.routes");
 const adminRoutes = require("./routes/admin.routes");
+const notificationsRoutes = require("./routes/notifications.routes");
 const notFound = require("./middlewares/notFound");
 const errorHandler = require("./middlewares/errorHandler");
 
@@ -44,6 +45,7 @@ app.use("/", bookingsRoutes);
 app.use("/", trainerApplicationsRoutes);
 app.use("/", usersRoutes);
 app.use("/", adminRoutes);
+app.use("/", notificationsRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
